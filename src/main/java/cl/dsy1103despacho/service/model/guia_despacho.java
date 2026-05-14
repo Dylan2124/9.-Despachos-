@@ -32,4 +32,5 @@ public class guia_despacho {
     @Column(name = "fecha_estimada")
     private LocalDateTime fechaEstimada;
 
+
 }
