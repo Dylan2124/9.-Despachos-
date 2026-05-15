@@ -20,7 +20,11 @@ public class guia_despachoController {
 
     // GET ───────────────────────
     @GetMapping
-    public ResponseEntity<List<guia_despachoResponseDTO>> obtenerTodos() {
+    public ResponseEntity<?> obtenerTodos() {
+        List<guia_despachoResponseDTO> lista = service.obtenerTodos();
+        if (lista.isEmpty()){
+            return ResponseEntity.ok("No se encontraron despachos")
+        }
         return new ResponseEntity<>(service.obtenerTodos(), HttpStatus.OK);
     }
 
