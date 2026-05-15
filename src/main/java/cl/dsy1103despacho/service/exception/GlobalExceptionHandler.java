@@ -32,16 +32,14 @@ public class GlobalExceptionHandler {
 
     // ── ERROR DE NEGOCIO (despacho duplicado, etc.) ──
     // Se dispara cuando el Service lanza RuntimeException,
-    // por ejemplo: "Ya existe una guía de despacho para el pedido ID: 99"
+    // Ejemplo: "Ya existe una guía de despacho para el pedido ID: 100"
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Map<String,String>> handleRuntimeException(
             RuntimeException ex){
         Map<String, String> error = new LinkedHashMap<>();
         error.put("error", ex.getMessage());
 
-        // 400 Bad Request: el cliente envió un dato que choca con las reglas.
-        // Usamos 400 y no 500 porque el servidor funcionó correctamente;
-        // fue la acción del cliente la que causó el problema.
+        // 400 Bad Request
         return ResponseEntity.badRequest().body(error);
     }
 }
