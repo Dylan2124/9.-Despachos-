@@ -12,4 +12,3 @@ public class guia_despachoController {
     private final guia_despachoSer
 }
 
-// ESTO ESTA MAL TA MALOOOOOOO// ESTO ESTA MAL TA MALOOOOOOO// ESTO ESTA MAL TA MALOOOOOOO// ESTO ESTA MAL TA MALOOOOOOO// ESTO ESTA MAL TA MALOOOOOOO
