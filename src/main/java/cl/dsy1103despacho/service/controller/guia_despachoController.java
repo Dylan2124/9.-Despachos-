@@ -23,7 +23,7 @@ public class guia_despachoController {
     public ResponseEntity<?> obtenerTodos() {
         List<guia_despachoResponseDTO> lista = service.obtenerTodos();
         if (lista.isEmpty()){
-            return ResponseEntity.ok("No se encontraron despachos")
+            return ResponseEntity.ok("No se encontraron despachos");
         }
         return new ResponseEntity<>(service.obtenerTodos(), HttpStatus.OK);
     }
