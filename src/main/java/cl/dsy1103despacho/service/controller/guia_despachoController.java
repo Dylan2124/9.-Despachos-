@@ -26,10 +26,15 @@ public class guia_despachoController {
 
     // GET ──────────────────────
     @GetMapping("/{id}")
-    public ResponseEntity<guia_despachoResponseDTO> obtenerPorId(@PathVariable Long id) {
-        return service.obtenerPorId(id)
-                .map(dto -> new ResponseEntity<>(dto, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
+        java.util.Optional<guia_despachoResponseDTO> guiaOptional = service.obtenerPorId(id);
+
+        if (guiaOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No se encontró un despacho con el ID: " + id);
+        }
+
+        return ResponseEntity.ok(guiaOptional.get());
     }
 
     // POST ────────────────────
@@ -59,9 +64,14 @@ public class guia_despachoController {
 
     // BUSCAR POR ID DE PEDIDO
     @GetMapping("/pedido/{idPedido}")
-    public ResponseEntity<guia_despachoResponseDTO> buscarPorIdPedido(@PathVariable Long idPedido) {
-        return service.buscarPorIdPedido(idPedido)
-                .map(dto -> new ResponseEntity<>(dto, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<?> buscarPorIdPedido(@PathVariable Long idPedido) {
+        java.util.Optional<guia_despachoResponseDTO> guiaOptional = service.buscarPorIdPedido(idPedido);
+
+        if (guiaOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No se encontró ninguna guía asociada al pedido con ID: " + idPedido);
+        }
+
+        return ResponseEntity.ok(guiaOptional.get());
     }
 }
