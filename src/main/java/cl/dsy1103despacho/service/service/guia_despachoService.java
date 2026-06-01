@@ -55,7 +55,7 @@ public class guia_despachoService {
         return repository.findById(id).map(this::mapToDTO);
     }
 
-    // ── GUARDAR (CREAR) ── ¡MÉTODO MODIFICADO CON OPENFEIGN! ────────────────────
+    // ── GUARDAR (CREAR) ── CON OPENFEIGN ────────────────────
     public guia_despachoResponseDTO guardar(guia_despachoRequestDTO dto) {
 
         // RuntimeException si ya existe un despacho para ese pedido (Tu validación de siempre)
