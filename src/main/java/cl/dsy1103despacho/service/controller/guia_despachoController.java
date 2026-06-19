@@ -5,6 +5,7 @@ import cl.dsy1103despacho.service.dto.guia_despachoResponseDTO;
 import cl.dsy1103despacho.service.service.guia_despachoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/api/despachos")
@@ -27,7 +31,15 @@ public class guia_despachoController {
         if (lista.isEmpty()){
             return ResponseEntity.ok(Map.of("mensaje", "No se encontraron despachos"));
         }
-        return ResponseEntity.ok(lista);
+
+        // HATEOAS: Agregamos links directo al DTO
+        lista.forEach(dto -> dto.add(linkTo(methodOn(guia_despachoController.class).obtenerPorId(dto.getIdGuia())).withSelfRel()));
+
+        // Para la lista completa usamos CollectionModel
+        CollectionModel<guia_despachoResponseDTO> collectionModel = CollectionModel.of(lista,
+                linkTo(methodOn(guia_despachoController.class).obtenerTodos()).withSelfRel());
+
+        return ResponseEntity.ok(collectionModel);
     }
 
     // GET POR ID ──────────────────────
@@ -40,14 +52,22 @@ public class guia_despachoController {
                     .body(Map.of("error", "No se encontró un despacho con el ID: " + id));
         }
 
-        return ResponseEntity.ok(guiaOptional.get());
+        guia_despachoResponseDTO response = guiaOptional.get();
+        // HATEOAS directo al DTO
+        response.add(linkTo(methodOn(guia_despachoController.class).obtenerPorId(id)).withSelfRel());
+        response.add(linkTo(methodOn(guia_despachoController.class).obtenerTodos()).withRel("todos-los-despachos"));
+
+        return ResponseEntity.ok(response);
     }
 
     // POST ────────────────────
     @PostMapping
-    public ResponseEntity<guia_despachoResponseDTO> guardar(
-            @Valid @RequestBody guia_despachoRequestDTO request) {
+    public ResponseEntity<guia_despachoResponseDTO> guardar(@Valid @RequestBody guia_despachoRequestDTO request) {
         guia_despachoResponseDTO response = service.guardar(request);
+
+        // HATEOAS directo al DTO recién creado
+        response.add(linkTo(methodOn(guia_despachoController.class).obtenerPorId(response.getIdGuia())).withSelfRel());
+
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -64,7 +84,12 @@ public class guia_despachoController {
                     .body(Map.of("error", "No se puede actualizar. No existe el despacho con ID: " + id));
         }
 
-        return ResponseEntity.ok(actualizado.get());
+        guia_despachoResponseDTO response = actualizado.get();
+        // HATEOAS directo al DTO actualizado
+        response.add(linkTo(methodOn(guia_despachoController.class).obtenerPorId(id)).withSelfRel());
+        response.add(linkTo(methodOn(guia_despachoController.class).obtenerTodos()).withRel("todos-los-despachos"));
+
+        return ResponseEntity.ok(response);
     }
 
     // DELETE ─────────────────────────
@@ -89,6 +114,11 @@ public class guia_despachoController {
                     .body(Map.of("error", "No se encontró ninguna guía asociada al pedido con ID: " + idPedido));
         }
 
-        return ResponseEntity.ok(guiaOptional.get());
+        guia_despachoResponseDTO response = guiaOptional.get();
+        // HATEOAS directo al DTO
+        response.add(linkTo(methodOn(guia_despachoController.class).buscarPorIdPedido(idPedido)).withSelfRel());
+        response.add(linkTo(methodOn(guia_despachoController.class).obtenerPorId(response.getIdGuia())).withRel("ver-despacho-detalle"));
+
+        return ResponseEntity.ok(response);
     }
 }

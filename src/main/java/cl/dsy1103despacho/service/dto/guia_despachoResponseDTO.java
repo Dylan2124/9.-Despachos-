@@ -3,13 +3,14 @@ package cl.dsy1103despacho.service.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class guia_despachoResponseDTO {
+public class guia_despachoResponseDTO extends RepresentationModel<guia_despachoResponseDTO> {
 
     private Long idGuia;
     private Long idPedido;
